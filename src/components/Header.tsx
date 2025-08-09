@@ -73,6 +73,9 @@ const Header = () => {
               <a href="/trabalhe-conosco" className="text-foreground hover:text-primary transition-colors font-medium">
                 Trabalhe Conosco
               </a>
+              <a href="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
+                Admin
+              </a>
             </nav>
 
             {/* Mobile menu button */}
@@ -107,6 +110,9 @@ const Header = () => {
                 </a>
                 <a href="/trabalhe-conosco" className="text-foreground hover:text-primary transition-colors font-medium py-2">
                   Trabalhe Conosco
+                </a>
+                <a href="/admin" className="text-foreground hover:text-primary transition-colors font-medium py-2">
+                  Admin
                 </a>
               </div>
             </nav>
