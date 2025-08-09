@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 
 const Produtos = () => {
   const categories = [
@@ -49,12 +49,20 @@ const Produtos = () => {
         <div className="container mx-auto px-4 text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Produtos</h1>
           <p className="text-xl mb-8">Conheça nossa linha completa de produtos</p>
-          <Button variant="outline" className="bg-white text-black hover:bg-white/90" asChild>
-            <a href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao Início
-            </a>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <Button variant="outline" className="bg-white text-black hover:bg-white/90" asChild>
+              <a href="/">
+                <ArrowLeft className="h-4 w-4" />
+                Voltar ao Início
+              </a>
+            </Button>
+            <Button variant="premium" asChild>
+              <a href="/produtos/loja" aria-label="Selecionar produtos e concluir pedido pelo WhatsApp">
+                <MessageCircle className="h-4 w-4" />
+                Fazer pedido (WhatsApp)
+              </a>
+            </Button>
+          </div>
         </div>
       </section>
 
