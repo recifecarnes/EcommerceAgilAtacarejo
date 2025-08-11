@@ -21,6 +21,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Pencil, Plus, Trash2 } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // Types
 interface Product {
@@ -214,15 +216,18 @@ const Admin = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground">Admin - Gerenciar Produtos e Banners</h1>
-        <p className="text-muted-foreground">Interface administrativa (sem persistência) pronta para integrar ao ERP/Supabase futuramente.</p>
-      </header>
-
-      <Tabs defaultValue="products">
-        <TabsList>
-          <TabsTrigger value="products">Produtos</TabsTrigger>
+    <>
+      <Header />
+      <section className="relative bg-gradient-to-b from-background to-muted/40 border-b">
+        <div className="container mx-auto px-4 py-10 md:py-16">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Administração</h1>
+          <p className="mt-2 text-muted-foreground">Gerencie produtos e banners (UI — integração ao ERP/Supabase em breve)</p>
+        </div>
+      </section>
+      <main className="container mx-auto px-4 py-8">
+        <Tabs defaultValue="products">
+          <TabsList>
+            <TabsTrigger value="products">Produtos</TabsTrigger>
           <TabsTrigger value="banners">Banners</TabsTrigger>
         </TabsList>
 
@@ -508,6 +513,8 @@ const Admin = () => {
         </TabsContent>
       </Tabs>
     </main>
+    <Footer />
+  </>
   );
 };
 
