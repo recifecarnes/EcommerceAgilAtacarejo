@@ -20,7 +20,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, Package, Image, TrendingUp, Users } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -218,29 +218,80 @@ const Admin = () => {
   return (
     <>
       <Header />
-      <section className="relative bg-gradient-to-b from-background to-muted/40 border-b">
-        <div className="container mx-auto px-4 py-10 md:py-16">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Administração</h1>
-          <p className="mt-2 text-muted-foreground">Gerencie produtos e banners (UI — integração ao ERP/Supabase em breve)</p>
+      <section className="relative bg-gradient-hero border-b">
+        <div className="container mx-auto px-4 py-12 md:py-20">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">
+              Dashboard Administrativo
+            </h1>
+            <p className="text-xl text-white/90 max-w-2xl mx-auto">
+              Gerencie produtos, banners e acompanhe estatísticas da sua loja
+            </p>
+          </div>
         </div>
       </section>
+
+      {/* Estatísticas */}
+      <section className="py-8 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Card className="shadow-card hover:shadow-elegant transition-shadow">
+              <CardContent className="p-6 text-center">
+                <Package className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground">{products.length}</div>
+                <div className="text-sm text-muted-foreground">Produtos Ativos</div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-card hover:shadow-elegant transition-shadow">
+              <CardContent className="p-6 text-center">
+                <Image className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground">{banners.length}</div>
+                <div className="text-sm text-muted-foreground">Banners Criados</div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-card hover:shadow-elegant transition-shadow">
+              <CardContent className="p-6 text-center">
+                <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground">R$ 12.890</div>
+                <div className="text-sm text-muted-foreground">Vendas do Mês</div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-card hover:shadow-elegant transition-shadow">
+              <CardContent className="p-6 text-center">
+                <Users className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground">156</div>
+                <div className="text-sm text-muted-foreground">Clientes Ativos</div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="products">
-          <TabsList>
-            <TabsTrigger value="products">Produtos</TabsTrigger>
-          <TabsTrigger value="banners">Banners</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="products" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+            <TabsTrigger value="products" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              Produtos
+            </TabsTrigger>
+            <TabsTrigger value="banners" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              Banners
+            </TabsTrigger>
+          </TabsList>
 
         {/* Produtos */}
         <TabsContent value="products">
-          <Card className="mt-4">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Produtos ({productCount})</CardTitle>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={onNewProduct}>
-                  <Plus className="h-4 w-4 mr-2" /> Novo produto
-                </Button>
+          <Card className="shadow-card border-0">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+              <div>
+                <CardTitle className="text-2xl font-bold text-foreground">Produtos</CardTitle>
+                <p className="text-muted-foreground mt-1">{productCount} produto{productCount !== 1 ? 's' : ''} cadastrado{productCount !== 1 ? 's' : ''}</p>
               </div>
+              <Button className="bg-primary hover:bg-primary/90 shadow-sm" onClick={onNewProduct}>
+                <Plus className="h-4 w-4 mr-2" /> 
+                Novo Produto
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -374,14 +425,16 @@ const Admin = () => {
 
         {/* Banners */}
         <TabsContent value="banners">
-          <Card className="mt-4">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Banners ({banners.length})</CardTitle>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={onNewBanner}>
-                  <Plus className="h-4 w-4 mr-2" /> Novo banner
-                </Button>
+          <Card className="shadow-card border-0">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+              <div>
+                <CardTitle className="text-2xl font-bold text-foreground">Banners</CardTitle>
+                <p className="text-muted-foreground mt-1">{banners.length} banner{banners.length !== 1 ? 's' : ''} cadastrado{banners.length !== 1 ? 's' : ''}</p>
               </div>
+              <Button className="bg-primary hover:bg-primary/90 shadow-sm" onClick={onNewBanner}>
+                <Plus className="h-4 w-4 mr-2" /> 
+                Novo Banner
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="rounded-md border">
