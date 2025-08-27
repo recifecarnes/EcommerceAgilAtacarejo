@@ -20,7 +20,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Pencil, Plus, Trash2, Package, Image, TrendingUp, Users } from "lucide-react";
+import { Pencil, Plus, Trash2, Package, Image, TrendingUp, Users, ShoppingCart, Filter, Search, BarChart3 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -48,6 +48,31 @@ interface Banner {
   active: boolean;
   imageDesktop?: string; // data URL
   imageMobile?: string; // data URL
+}
+
+interface Order {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  items: OrderItem[];
+  total: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  createdAt: Date;
+}
+
+interface OrderItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  active: boolean;
 }
 
 // Helpers
@@ -103,6 +128,39 @@ const Admin = () => {
       link: "/produtos/bovinos",
       targetPage: "/",
     },
+  ]);
+
+  const [orders, setOrders] = useState<Order[]>([
+    {
+      id: uid(),
+      customerName: "João Silva",
+      customerEmail: "joao@email.com",
+      customerPhone: "(11) 99999-9999",
+      items: [
+        { productId: "1", productName: "Ração Premium Bovinos 25kg", quantity: 2, price: 129.9 }
+      ],
+      total: 259.8,
+      status: 'processing',
+      createdAt: new Date('2024-01-15'),
+    },
+    {
+      id: uid(),
+      customerName: "Maria Santos",
+      customerEmail: "maria@email.com",
+      customerPhone: "(11) 88888-8888",
+      items: [
+        { productId: "1", productName: "Ração Premium Bovinos 25kg", quantity: 1, price: 129.9 }
+      ],
+      total: 129.9,
+      status: 'delivered',
+      createdAt: new Date('2024-01-10'),
+    },
+  ]);
+
+  const [categories, setCategories] = useState<Category[]>([
+    { id: uid(), name: "Bovinos", description: "Produtos para bovinos de corte e leite", active: true },
+    { id: uid(), name: "Suínos", description: "Produtos para suinocultura", active: true },
+    { id: uid(), name: "Aves", description: "Produtos para avicultura", active: true },
   ]);
 
   // Dialog state - Products
@@ -251,16 +309,16 @@ const Admin = () => {
             </Card>
             <Card className="shadow-card hover:shadow-elegant transition-shadow">
               <CardContent className="p-6 text-center">
-                <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
-                <div className="text-2xl font-bold text-foreground">R$ 12.890</div>
-                <div className="text-sm text-muted-foreground">Vendas do Mês</div>
+                <ShoppingCart className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground">{orders.length}</div>
+                <div className="text-sm text-muted-foreground">Pedidos Totais</div>
               </CardContent>
             </Card>
             <Card className="shadow-card hover:shadow-elegant transition-shadow">
               <CardContent className="p-6 text-center">
-                <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-                <div className="text-2xl font-bold text-foreground">156</div>
-                <div className="text-sm text-muted-foreground">Clientes Ativos</div>
+                <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
+                <div className="text-2xl font-bold text-foreground">R$ {orders.filter(o => o.status === 'delivered').reduce((sum, o) => sum + o.total, 0).toFixed(2)}</div>
+                <div className="text-sm text-muted-foreground">Total Vendido</div>
               </CardContent>
             </Card>
           </div>
@@ -268,17 +326,158 @@ const Admin = () => {
       </section>
 
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+        <Tabs defaultValue="dashboard" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-[600px]">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex items-center gap-2">
+              <ShoppingCart className="h-4 w-4" />
+              Pedidos
+            </TabsTrigger>
             <TabsTrigger value="products" className="flex items-center gap-2">
               <Package className="h-4 w-4" />
               Produtos
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              Categorias
             </TabsTrigger>
             <TabsTrigger value="banners" className="flex items-center gap-2">
               <Image className="h-4 w-4" />
               Banners
             </TabsTrigger>
           </TabsList>
+
+        {/* Dashboard */}
+        <TabsContent value="dashboard">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  Vendas Recentes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {orders.filter(o => o.status === 'delivered').slice(0, 3).map((order) => (
+                    <div key={order.id} className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
+                      <div>
+                        <p className="font-medium">{order.customerName}</p>
+                        <p className="text-sm text-muted-foreground">{order.createdAt.toLocaleDateString()}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-primary">R$ {order.total.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-primary" />
+                  Produtos em Destaque
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {products.filter(p => p.highlight).slice(0, 3).map((product) => (
+                    <div key={product.id} className="flex justify-between items-center p-3 bg-muted/30 rounded-lg">
+                      <div>
+                        <p className="font-medium">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">{product.category}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-primary">R$ {product.price.toFixed(2)}</p>
+                        <p className="text-sm text-muted-foreground">Est: {product.stock}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Pedidos */}
+        <TabsContent value="orders">
+          <Card className="shadow-card border-0">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+              <div>
+                <CardTitle className="text-2xl font-bold text-foreground">Pedidos</CardTitle>
+                <p className="text-muted-foreground mt-1">{orders.length} pedido{orders.length !== 1 ? 's' : ''} no total</p>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <Label htmlFor="order-search">Buscar</Label>
+                  <Input id="order-search" placeholder="Cliente, email..." aria-label="Buscar pedidos" />
+                </div>
+                <div>
+                  <Label htmlFor="order-status">Status</Label>
+                  <select id="order-status" className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <option value="">Todos os status</option>
+                    <option value="pending">Pendente</option>
+                    <option value="processing">Processando</option>
+                    <option value="shipped">Enviado</option>
+                    <option value="delivered">Entregue</option>
+                    <option value="cancelled">Cancelado</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {orders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">{order.customerName}</TableCell>
+                        <TableCell>{order.customerEmail}</TableCell>
+                        <TableCell>R$ {order.total.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                            order.status === 'processing' ? 'bg-blue-100 text-blue-700' :
+                            order.status === 'shipped' ? 'bg-purple-100 text-purple-700' :
+                            order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            {order.status === 'pending' ? 'Pendente' :
+                             order.status === 'processing' ? 'Processando' :
+                             order.status === 'shipped' ? 'Enviado' :
+                             order.status === 'delivered' ? 'Entregue' : 'Cancelado'}
+                          </span>
+                        </TableCell>
+                        <TableCell>{order.createdAt.toLocaleDateString()}</TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="outline" size="sm">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Produtos */}
         <TabsContent value="products">
@@ -421,6 +620,63 @@ const Admin = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </TabsContent>
+
+        {/* Categorias */}
+        <TabsContent value="categories">
+          <Card className="shadow-card border-0">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+              <div>
+                <CardTitle className="text-2xl font-bold text-foreground">Categorias</CardTitle>
+                <p className="text-muted-foreground mt-1">{categories.length} categoria{categories.length !== 1 ? 's' : ''} cadastrada{categories.length !== 1 ? 's' : ''}</p>
+              </div>
+              <Button className="bg-primary hover:bg-primary/90 shadow-sm">
+                <Plus className="h-4 w-4 mr-2" /> 
+                Nova Categoria
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Descrição</TableHead>
+                      <TableHead>Produtos</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {categories.map((category) => (
+                      <TableRow key={category.id}>
+                        <TableCell className="font-medium">{category.name}</TableCell>
+                        <TableCell>{category.description}</TableCell>
+                        <TableCell>{products.filter(p => p.category === category.name).length} produtos</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            category.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {category.active ? 'Ativa' : 'Inativa'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline" size="sm">
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button variant="destructive" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Banners */}
